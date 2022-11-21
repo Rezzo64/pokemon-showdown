@@ -89,6 +89,28 @@ export const Formats: FormatList = [
 		banlist: ['Uber', 'AG', 'Arena Trap', 'Moody', 'Power Construct', 'Sand Veil', 'Shadow Tag', 'Snow Cloak', 'King\'s Rock', 'Baton Pass'],
 	},
 	{
+		name: "[Gen 8] Sandbox",
+		mod: 'gen8',
+		searchShow: true,
+		debug: false,
+		battle: {trunc: Math.trunc},
+		ruleset: ['Team Preview', 'Cancel Mod', 'Sandbox Mod'],
+		validateSet(set, teamHas) {
+			const problems = [];
+			console.log(set);
+			if (this.dex.species.get(set.species).num < 1 && !set.customBuilderName) {
+				problems.push(`${set.species} is an invalid pattern. Please double check that it is correct.`);
+			} else if (set.customBuilderName) {
+				const fakemon = this.dex.species.construct(set.customBuilderName);
+				fakemon.exists = true;
+				const problem = this.validateSet(set, teamHas);
+				if (problem?.length) problems.push(...problem);
+				set.species = set.customBuilderName;
+			}
+			return problems;
+		},
+	},
+	{
 		name: "[Gen 8] OU (Blitz)",
 
 		mod: 'gen8',

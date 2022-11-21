@@ -281,7 +281,14 @@ export class Pokemon {
 
 		if (typeof set === 'string') set = {name: set};
 
-		this.baseSpecies = this.battle.dex.species.get(set.species || set.name);
+		if (this.battle.format.ruleset.includes('Sandbox Mod')) {
+			this.baseSpecies = this.battle.dex.species.construct(set.species);
+			this.baseSpecies.exists = true;
+		} else {
+			this.baseSpecies = this.battle.dex.species.get(set.species || set.name);
+		}
+
+		console.log(this.baseSpecies);
 		if (!this.baseSpecies.exists) {
 			throw new Error(`Unidentified species: ${this.baseSpecies.name}`);
 		}
@@ -450,6 +457,7 @@ export class Pokemon {
 		this.hp = 0;
 		this.clearVolatile();
 		this.hp = this.maxhp;
+		console.log("Initializing Pokemon done!")
 	}
 
 	toJSON(): AnyObject {

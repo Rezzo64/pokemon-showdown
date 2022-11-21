@@ -2096,4 +2096,9 @@ export const Rulesets: {[k: string]: FormatData} = {
 			}
 		},
 	},
-};
+	sandboxmod: {
+		effectType: 'Rule',
+		name: 'Sandbox Mod',
+		desc: 'Enables sandbox properties for creation of custom Pokemon and moves',
+	},
+}

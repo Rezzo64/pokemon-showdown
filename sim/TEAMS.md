@@ -213,6 +213,8 @@ NICKNAME|SPECIES|ITEM|ABILITY|MOVES|NATURE|EVS|GENDER|IVS|SHINY|LEVEL|HAPPINESS,
 - If `POKEBALL`, `HIDDENPOWERTYPE`, `GIGANTAMAX` and `DYNAMAXLEVEL`
   are all blank, the commas will be left off.
 
+- Sandbox species strings are stored after `DYNAMAXLEVEL` as part 
+  of the Pet Mods custom server (Rezzo) 
 
 Converting between formats
 --------------------------

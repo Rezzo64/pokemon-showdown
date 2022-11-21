@@ -12,6 +12,9 @@ export const Scripts: ModdedBattleScriptsData = {
 				this.modData('Moves', i).category = newCategory;
 			}
 		}
+		if (this.data.FormatsData.tier == "OU") {
+
+		}
 	},
 	pokemon: {
 		inherit: true,

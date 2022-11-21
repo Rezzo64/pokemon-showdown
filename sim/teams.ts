@@ -104,6 +104,11 @@ export interface PokemonSet {
 	 */
 	dynamaxLevel?: number;
 	gigantamax?: boolean;
+	/**
+	 * Custom Builder Name, used for storing the species pattern of a
+	 * custom Fakemon used in Sandbox.
+	 */
+	customBuilderName?: string;
 }
 
 export const Teams = new class Teams {
@@ -193,6 +198,12 @@ export const Teams = new class Teams {
 				buf += ',' + this.packName(set.pokeball || '');
 				buf += ',' + (set.gigantamax ? 'G' : '');
 				buf += ',' + (set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10 ? set.dynamaxLevel : '');
+			}
+
+			// sandbox species builder
+			if (set.species.match(/[a-zA-Z]+\b-[a-zA-Z]+\b-[0-9]+\b-[0-9]+\b-[0-9]+\b-[0-9]+\b-[0-9]+\b-[0-9]+\b/gm)) {
+				buf += ',' + set.species;
+				set.customBuilderName = set.species;
 			}
 		}
 
@@ -313,9 +324,9 @@ export const Teams = new class Teams {
 			j = buf.indexOf(']', i);
 			let misc;
 			if (j < 0) {
-				if (i < buf.length) misc = buf.substring(i).split(',', 4);
+				if (i < buf.length) misc = buf.substring(i).split(',', 5);
 			} else {
-				if (i !== j) misc = buf.substring(i, j).split(',', 4);
+				if (i !== j) misc = buf.substring(i, j).split(',', 5);
 			}
 			if (misc) {
 				set.happiness = (misc[0] ? Number(misc[0]) : 255);
@@ -323,6 +334,7 @@ export const Teams = new class Teams {
 				set.pokeball = this.unpackName(misc[2] || '', Dex.items);
 				set.gigantamax = !!misc[3];
 				set.dynamaxLevel = (misc[4] ? Number(misc[4]) : 10);
+				set.customBuilderName = misc[5] || '';
 			}
 			if (j < 0) break;
 			i = j + 1;
@@ -397,6 +409,9 @@ export const Teams = new class Teams {
 		}
 		if (set.gigantamax) {
 			out += `Gigantamax: Yes  \n`;
+		}
+		if (set.customBuilderName) {
+			out += `Sandbox Fakemon: Yes  \n`;
 		}
 
 		// stats
@@ -531,11 +546,16 @@ export const Teams = new class Teams {
 	}
 	/** Accepts a team in any format (JSON, packed, or exported) */
 	import(buffer: string): PokemonSet[] | null {
+		console.log(buffer);
 		if (buffer.startsWith('[')) {
 			try {
 				const team = JSON.parse(buffer);
 				if (!Array.isArray(team)) throw new Error(`Team should be an Array but isn't`);
 				for (const set of team) {
+					// Check for sandbox pattern before trying to import a species
+					if (set.species.match(/[a-zA-Z]+\b-[a-zA-Z]+\b-[0-9]+\b-[0-9]+\b-[0-9]+\b-[0-9]+\b-[0-9]+\b-[0-9]+\b/gm)) {
+						set.customBuilderName = set.species;
+					}
 					set.name = Dex.getName(set.name);
 					set.species = Dex.getName(set.species);
 					set.item = Dex.getName(set.item);

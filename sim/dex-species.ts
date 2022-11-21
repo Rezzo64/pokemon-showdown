@@ -525,4 +525,41 @@ export class DexSpecies {
 		this.allCache = species;
 		return this.allCache;
 	}
+		/**
+	 * Sandbox Fakemon creator.
+	 * To create a Fakemon, enter your Fakemon's properties into the species field as the following signature:
+	 * type1-type2-basehp-baseatk-basedef-basespa-basespd-basespe
+	 */
+	construct(ID: string) {
+		var pokeInstance = this.get(ID)
+		if (pokeInstance.exists) {
+			return this.get(ID); // real Pokemon
+		}
+		console.log(ID);
+		const builder = ID.split("-");
+		const types = [toTitleCase(builder[0]), toTitleCase(builder[1])];
+
+		const pokemon = new Species({
+			ID: ID,
+			name: ID,
+			exists: false,
+			isNonstandard: 'Custom',
+			types: types,
+			baseStats: { hp: builder[2], atk: builder[3], def: builder[4], spa: builder[5], spd: builder[6], spe: builder[7] },
+			weightkg: 40,
+			heightm: 1,
+			num: 0,
+			spriteid: 'substitute',
+		});
+
+		console.log("on creation: " + pokemon);
+		this.speciesCache.set(pokemon.id, pokemon);
+		return this.get(pokemon);
+
+		function toTitleCase(str: string) {
+			return str.toLowerCase().split(' ').map(function (word) {
+			  return (word.charAt(0).toUpperCase() + word.slice(1));
+			}).join(' ');
+		  }
+	}
 }
